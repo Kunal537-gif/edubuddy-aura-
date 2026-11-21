@@ -59,6 +59,48 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Vercel Serverless routing middleware: handles rewrites and route prefixes gracefully
+@app.middleware("http")
+async def vercel_routing_middleware(request, call_next):
+    scope = request.scope
+    path = scope.get("path", "")
+    
+    # 1. Recover path if rewritten to script filename or entrypoint
+    script_entrypoints = (
+        "/api/index.py", "api/index.py", "/api/index", "/api",
+        "/main.py", "main.py", "/index.py", "index.py"
+    )
+    if path in script_entrypoints:
+        orig = request.headers.get("x-forwarded-uri") or request.headers.get("x-matched-path")
+        if orig:
+            clean = orig.split("?")[0]
+            if clean and clean not in script_entrypoints:
+                scope["path"] = clean
+                path = clean
+        # Also check path query param if passed via dest rewrite e.g. ?path=health
+        query_path = request.query_params.get("path")
+        if query_path and path in script_entrypoints:
+            qp = query_path if query_path.startswith("/") else f"/{query_path}"
+            scope["path"] = f"/api{qp}" if not qp.startswith("/api") else qp
+            path = scope["path"]
+
+    # 2. If path is missing the /api prefix (e.g. /health, /profile, /tutor/chat), prepend /api
+    if path and not path.startswith("/api") and not path.startswith("/static") and path not in ("/", "/index.html", "/docs", "/openapi.json", "/redoc", "/favicon.ico"):
+        scope["path"] = f"/api{path}"
+
+    return await call_next(request)
+
+# Root API Status Endpoint
+@app.get("/api")
+@app.get("/api/")
+def api_root():
+    return {
+        "status": "online",
+        "app": APP_TITLE,
+        "version": APP_VERSION,
+        "endpoints": ["/api/health", "/api/topics", "/api/simplify", "/api/tutor/chat", "/api/stats", "/api/profile"]
+    }
+
 # Health & Status Endpoint
 @app.get("/api/health")
 def health():
