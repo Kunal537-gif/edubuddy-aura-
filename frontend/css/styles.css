@@ -1,0 +1,155 @@
+/* EduBuddy Aura Custom Styles */
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(51, 65, 85, 0.8);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 1);
+}
+
+/* Sidebar navigation styles - High Contrast & Crisp Visual Hierarchy */
+.nav-item {
+  color: #cbd5e1;
+  font-weight: 500;
+  border-radius: 0.85rem;
+  border: 1px solid transparent;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.nav-item:hover {
+  background-color: rgba(30, 41, 59, 0.8);
+  color: #ffffff;
+  border-color: rgba(71, 85, 105, 0.4);
+}
+.nav-item.active {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.25), rgba(99, 102, 241, 0.25));
+  color: #93c5fd;
+  font-weight: 600;
+  border: 1px solid rgba(96, 165, 250, 0.4);
+  box-shadow: 0 4px 14px -2px rgba(37, 99, 235, 0.25);
+}
+
+/* Pseudocode Tracker styling in Algorithm Sandbox */
+.pseudocode-line {
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.375rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  transition: all 0.15s ease;
+  border-left: 3px solid transparent;
+}
+.pseudocode-line.active {
+  background-color: rgba(59, 130, 246, 0.25);
+  border-left-color: #60a5fa;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* Live Demo Step Pill */
+.demo-step-badge {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #0f172a;
+  font-weight: 700;
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+}
+
+/* Concept Tabs */
+.concept-tab {
+  color: #94a3b8;
+  border-bottom: 2px solid transparent;
+}
+.concept-tab:hover {
+  color: #e2e8f0;
+}
+.concept-tab.active {
+  color: #3b82f6;
+  border-bottom: 2px solid #3b82f6;
+  background-color: rgba(30, 41, 59, 0.5);
+}
+
+/* 3D Flip Card Container */
+.flashcard-scene {
+  perspective: 1200px;
+  width: 100%;
+  height: 320px;
+}
+
+.flashcard-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+.flashcard-inner.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.flashcard-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(51, 65, 85, 0.8);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+}
+
+.flashcard-front {
+  background: linear-gradient(145deg, #0f172a, #1e293b);
+}
+
+.flashcard-back {
+  background: linear-gradient(145deg, #1e1b4b, #0f172a);
+  transform: rotateY(180deg);
+}
+
+/* Math formula display */
+.katex-display {
+  margin: 0.5em 0 !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.25rem 0;
+}
+
+/* Option selection hover animation */
+.quiz-option-btn {
+  transition: all 0.15s ease-in-out;
+}
+.quiz-option-btn:hover:not(:disabled) {
+  border-color: #3b82f6;
+  background-color: rgba(30, 41, 59, 0.9);
+}
+.quiz-option-btn.selected {
+  border-color: #3b82f6;
+  background-color: rgba(59, 130, 246, 0.15);
+}
+.quiz-option-btn.correct {
+  border-color: #10b981 !important;
+  background-color: rgba(16, 185, 129, 0.2) !important;
+  color: #34d399 !important;
+}
+.quiz-option-btn.incorrect {
+  border-color: #f43f5e !important;
+  background-color: rgba(244, 63, 94, 0.2) !important;
+  color: #fb7185 !important;
+}
+
+/* Pulse badge */
+@keyframes softPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.02); }
+}
+.glow-pulse {
+  animation: softPulse 3s infinite ease-in-out;
+}
