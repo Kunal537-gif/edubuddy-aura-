@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduBuddy Aura | AI-Powered Student Learning Platform</title>
+  <meta name="description" content="Interactive learning platform that simplifies difficult concepts, improves understanding, and accelerates mastery through AI-powered assistance.">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+            },
+            darkBg: '#0b0f19',
+            darkCard: '#111827',
+            darkCardHover: '#1f2937',
+            darkBorder: '#374151',
+            accentGlow: '#6366f1',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- KaTeX for LaTeX Math Rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+  <!-- Chart.js for Student Mastery & Study Progress -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Mermaid.js for Flowcharts & Concept Architecture -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.4.0/dist/mermaid.min.js"></script>
+
+  <!-- Canvas Confetti for Level-Ups and Quiz Celebrations -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+  <!-- Top Application Navigation Bar -->
+  <header class="sticky top-0 z-40 bg-slate-900/80 backdrop-blur-md border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="navigateTo('dashboard')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-brand-500/30">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-brand-400 bg-clip-text text-transparent">EduBuddy</span>
+            <span class="text-xs px-2 py-0.5 rounded-full font-semibold bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 tracking-wider uppercase">AURA</span>
+          </div>
+          <p class="text-[10px] text-slate-400 hidden sm:block">AI-Powered Cognitive Mastery Platform</p>
+        </div>
+      </div>
+
+      <!-- Quick Global Concept Search -->
+      <div class="flex-1 max-w-xl mx-2 hidden md:block">
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </div>
+          <input type="text" id="globalSearchInput" 
+                 placeholder="Search or ask to simplify any difficult concept (e.g. Attention Mechanism, Quantum Entanglement)..." 
+                 class="w-full pl-9 pr-12 py-2 text-sm rounded-xl bg-slate-800/80 border border-slate-700/80 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all"
+                 onkeydown="handleGlobalSearch(event)">
+          <div class="absolute inset-y-0 right-0 pr-2 flex items-center">
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-700 text-slate-300 border border-slate-600">Enter ↵</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Stats Badges & Focus Sound Mode -->
+      <div class="flex items-center gap-3">
+        
+        <!-- Gemini AI Status Pill in Navbar -->
+        <button id="navbarGeminiBadge" onclick="openGeminiModal()" title="Google Gemini AI Provider Settings"
+                class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-medium transition shadow-sm">
+          <span>⚡</span>
+          <span>Gemini AI</span>
+        </button>
+
+        <!-- 5-Minute Guided Tour Button -->
+        <button id="headerTourBtn" onclick="startFiveMinuteTour()" title="Start 5-Minute Live Interactive Demonstration" 
+                class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-amber-500/20 via-rose-500/20 to-purple-500/20 hover:from-amber-500/30 hover:to-rose-500/30 text-amber-300 border border-amber-500/40 transition shadow shadow-amber-500/10">
+          <span>🎬</span>
+          <span class="hidden sm:inline">5-Min Tour</span>
+        </button>
+
+        <!-- Ambient Focus Audio Button -->
+        <button id="focusAudioBtn" onclick="toggleFocusAudio()" title="Ambient Focus Sound (Rain / Binaural / Lofi)" 
+                class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
+          <span id="audioIcon">🎧</span>
+          <span class="hidden sm:inline" id="audioLabel">Focus Sound</span>
+        </button>
+
+        <!-- Streak Badge -->
+        <div class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold" title="5-Day Learning Streak">
+          <span>🔥</span>
+          <span id="userStreak">5 Days</span>
+        </div>
+
+        <!-- XP & Level Badge -->
+        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-semibold" title="Total XP Earned">
+          <span>⚡</span>
+          <span id="userXP">420 XP</span>
+          <span class="text-slate-500">|</span>
+          <span id="userLevel">Lvl 3</span>
+        </div>
+
+        <!-- User Profile Avatar & Button -->
+        <div onclick="openProfileModal()" class="flex items-center gap-2 px-2.5 py-1 rounded-xl bg-slate-800/90 hover:bg-slate-700 border border-slate-700/80 cursor-pointer transition shadow-sm group" title="Click to edit Profile & Learning Target">
+          <div id="navbarAvatar" class="w-7 h-7 rounded-lg bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-sm shadow group-hover:scale-105 transition">
+            🎓
+          </div>
+          <span id="navbarUserName" class="text-xs font-bold text-slate-200 hidden sm:inline max-w-[110px] truncate">Alex Mercer</span>
+          <span class="text-[10px] text-slate-400 group-hover:text-brand-400 transition">✏️</span>
+        </div>
+
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Layout Wrapper -->
+  <div class="flex-1 flex max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 gap-6">
+
+    <!-- Responsive Sidebar Navigation -->
+    <aside class="w-64 shrink-0 hidden lg:block">
+      <div class="sticky top-24 space-y-6">
+
+        <!-- Navigation Links -->
+        <nav class="space-y-1">
+          <button onclick="navigateTo('dashboard')" id="nav-dashboard" class="nav-item active w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-medium rounded-xl transition">
+            <span class="text-lg">🏠</span>
+            <span>Dashboard</span>
+          </button>
+          
+          <button onclick="navigateTo('simplifier')" id="nav-simplifier" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-medium rounded-xl transition">
+            <span class="text-lg">💡</span>
+            <div class="flex-1 text-left flex items-center justify-between">
+              <span>Concept Simplifier</span>
+              <span class="text-[10px] bg-brand-500/20 text-brand-300 px-1.5 py-0.5 rounded-full font-bold">AI</span>
+            </div>
+          </button>
+
+          <button onclick="navigateTo('tutor')" id="nav-tutor" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-medium rounded-xl transition">
+            <span class="text-lg">🎓</span>
+            <div class="flex-1 text-left flex items-center justify-between">
+              <span>Socratic AI Tutor</span>
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            </div>
+          </button>
+
+          <button onclick="navigateTo('simulations')" id="nav-simulations" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-medium rounded-xl transition">
+            <span class="text-lg">🧪</span>
+            <span>Interactive Sandboxes</span>
+          </button>
+
+          <button onclick="navigateTo('quiz')" id="nav-quiz" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-medium rounded-xl transition">
+            <span class="text-lg">🏆</span>
+            <span>Adaptive Quiz</span>
+          </button>
+
+          <button onclick="navigateTo('flashcards')" id="nav-flashcards" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-medium rounded-xl transition">
+            <span class="text-lg">📇</span>
+            <div class="flex-1 text-left flex items-center justify-between">
+              <span>Spaced Flashcards</span>
+              <span id="flashcardDueBadge" class="text-[10px] bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded-full font-bold">8 due</span>
+            </div>
+          </button>
+
+          <button onclick="navigateTo('mindmap')" id="nav-mindmap" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-medium rounded-xl transition">
+            <span class="text-lg">🌐</span>
+            <span>Knowledge Map</span>
+          </button>
+
+          <button onclick="navigateTo('notes')" id="nav-notes" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-medium rounded-xl transition">
+            <span class="text-lg">📝</span>
+            <span>Smart Notes & Cheats</span>
+          </button>
+
+          <button onclick="openProfileModal()" id="nav-profile" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-medium rounded-xl transition text-slate-300 hover:text-white">
+            <span class="text-lg">⚙️</span>
+            <span>Profile & Goal</span>
+          </button>
+        </nav>
+
+        <!-- Daily Learning Goal Progress Card -->
+        <div class="p-4 rounded-2xl bg-gradient-to-b from-slate-800/80 to-slate-900/80 border border-slate-800 shadow-sm space-y-3">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-semibold text-slate-300">Daily Study Target</span>
+            <span class="text-brand-400 font-bold" id="dailyGoalText">35 / 45 min</span>
+          </div>
+          <div class="w-full bg-slate-700/60 h-2 rounded-full overflow-hidden">
+            <div id="dailyProgressBar" class="bg-gradient-to-r from-brand-500 to-indigo-500 h-full rounded-full transition-all duration-500" style="width: 78%"></div>
+          </div>
+          <p class="text-[11px] text-slate-400 leading-relaxed">
+            10 mins more to unlock your <strong class="text-amber-400">Streak Protector</strong> for today!
+          </p>
+        </div>
+
+        <!-- Quick Subject Filters -->
+        <div class="space-y-2">
+          <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-2">Domains</h4>
+          <div class="flex flex-wrap gap-1.5">
+            <button onclick="filterCuratedTopics('Computer Science')" class="px-2.5 py-1 text-xs rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500/20 transition">💻 Computer Science</button>
+            <button onclick="filterCuratedTopics('Physics')" class="px-2.5 py-1 text-xs rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20 hover:bg-purple-500/20 transition">🌌 Physics</button>
+            <button onclick="filterCuratedTopics('Mathematics')" class="px-2.5 py-1 text-xs rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 transition">📐 Mathematics</button>
+            <button onclick="filterCuratedTopics('Biology')" class="px-2.5 py-1 text-xs rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition">🧬 Biology</button>
+            <button onclick="filterCuratedTopics('Economics')" class="px-2.5 py-1 text-xs rounded-lg bg-pink-500/10 text-pink-400 border border-pink-500/20 hover:bg-pink-500/20 transition">📈 Economics</button>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- Main Dynamic Content Container -->
+    <main class="flex-1 min-w-0">
+
+      <!-- ========================================================
+           VIEW 1: DASHBOARD OVERVIEW
+           ======================================================== -->
+      <div id="view-dashboard" class="view-panel space-y-6">
+
+        <!-- Welcome Hero Banner -->
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-brand-900/60 via-indigo-950/60 to-purple-950/60 border border-brand-500/20 p-6 sm:p-8 backdrop-blur-sm">
+          <div class="relative z-10 max-w-2xl space-y-3">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/20 border border-brand-500/30 text-brand-300 text-xs font-semibold">
+              <span>🚀</span> AI Cognitive Scaffolding Ready
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              Master Difficult Concepts in Minutes, Not Hours.
+            </h1>
+            <p class="text-sm text-slate-300 leading-relaxed">
+              Tackle abstract algorithms, quantum mechanics, or advanced calculus with multi-tier intuitive analogies, Socratic questioning, and interactive visual sandboxes.
+            </p>
+            <div class="flex flex-wrap items-center gap-3 pt-2">
+              <button onclick="startFiveMinuteTour()" 
+                      class="px-4 py-2 text-xs font-bold rounded-xl bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-600 hover:from-amber-400 hover:to-indigo-500 text-white shadow-lg shadow-rose-500/25 flex items-center gap-2 transition hover:scale-[1.02]">
+                <span>🎬</span> Start 5-Minute Live Tour
+              </button>
+              <button onclick="simplifyDirect('Attention Mechanism in Transformers')" 
+                      class="px-4 py-2 text-xs font-semibold rounded-xl bg-brand-600 hover:bg-brand-500 text-white shadow-lg shadow-brand-500/25 transition">
+                ⚡ Try: Attention Mechanism
+              </button>
+              <button onclick="simplifyDirect('Quantum Superposition & Entanglement')" 
+                      class="px-4 py-2 text-xs font-semibold rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                🌌 Try: Quantum Entanglement
+              </button>
+              <button onclick="navigateTo('simulations')" 
+                      class="px-4 py-2 text-xs font-semibold rounded-xl bg-purple-600/30 hover:bg-purple-600/50 text-purple-300 border border-purple-500/30 transition">
+                🧪 Explore Sandboxes
+              </button>
+            </div>
+          </div>
+          <!-- Decorative Background Glow -->
+          <div class="absolute -right-16 -top-16 w-80 h-80 rounded-full bg-brand-500/10 blur-3xl pointer-events-none"></div>
+          <div class="absolute right-20 -bottom-20 w-60 h-60 rounded-full bg-indigo-500/10 blur-2xl pointer-events-none"></div>
+        </div>
+
+        <!-- Metrics Overview Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center text-xl">
+              🧠
+            </div>
+            <div>
+              <p class="text-xs text-slate-400">Mastered Topics</p>
+              <h3 class="text-xl font-bold text-white" id="statMasteredCount">6</h3>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center text-xl">
+              🔥
+            </div>
+            <div>
+              <p class="text-xs text-slate-400">Current Streak</p>
+              <h3 class="text-xl font-bold text-white" id="statStreakDays">5 Days</h3>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 flex items-center justify-center text-xl">
+              ⏳
+            </div>
+            <div>
+              <p class="text-xs text-slate-400">Study Time</p>
+              <h3 class="text-xl font-bold text-white" id="statStudyTime">210 min</h3>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center text-xl">
+              📇
+            </div>
+            <div>
+              <p class="text-xs text-slate-400">Flashcards Due</p>
+              <h3 class="text-xl font-bold text-white" id="statFlashcardsDue">8</h3>
+            </div>
+          </div>
+        </div>
+
+        <!-- Two Column Section: Subject Mastery Radar & Active Topics -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          <!-- Subject Mastery Radar Chart -->
+          <div class="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                <span>📊</span> Domain Mastery Radar
+              </h3>
+              <span class="text-xs text-slate-400">Adaptive calibration</span>
+            </div>
+            <div class="relative h-64 w-full flex items-center justify-center">
+              <canvas id="masteryRadarChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Recently Studied Concepts -->
+          <div class="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                <span>📚</span> Recent Conceptual Breakthroughs
+              </h3>
+              <button onclick="navigateTo('simplifier')" class="text-xs text-brand-400 hover:text-brand-300 font-medium">Explore All →</button>
+            </div>
+            <div id="recentConceptsList" class="space-y-2.5">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Adaptive Remediation Roadmap & Weak Areas (Connected to Real SQLite Data) -->
+        <div id="recoveryRoadmapCard" class="p-5 rounded-2xl bg-gradient-to-r from-slate-900 via-rose-950/20 to-slate-900 border border-rose-500/30 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <span class="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/20 flex items-center justify-center text-sm font-bold">🎯</span>
+              <div>
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                  <span>Targeted Remediation & Weak Areas Recovery</span>
+                  <span class="text-[10px] bg-rose-500/20 text-rose-300 px-2 py-0.5 rounded-full font-semibold">Active Diagnosis</span>
+                </h3>
+                <p class="text-xs text-slate-400">Synthesized from adaptive quiz misses to guide your next Socratic study focus</p>
+              </div>
+            </div>
+            <button onclick="navigateTo('quiz')" class="text-xs text-rose-400 hover:text-rose-300 font-medium">Take New Quiz →</button>
+          </div>
+          
+          <div id="weakAreasContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+            <!-- Dynamically populated from SQLite weak_areas via app.js -->
+          </div>
+        </div>
+
+        <!-- Curated High-Yield Topics Shelf -->
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-lg font-bold text-white">Curated Difficult Concepts</h2>
+              <p class="text-xs text-slate-400">Tested and verified by university curricula and STEM exams</p>
+            </div>
+            <div class="flex items-center gap-2 text-xs">
+              <button onclick="filterCuratedTopics('all')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">All</button>
+              <button onclick="filterCuratedTopics('Computer Science')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">CS</button>
+              <button onclick="filterCuratedTopics('Physics')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Physics</button>
+              <button onclick="filterCuratedTopics('Mathematics')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Math</button>
+            </div>
+          </div>
+
+          <div id="curatedTopicsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Unlocked Achievements / Badges -->
+        <div class="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm space-y-3">
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <span>🏅</span> Learning Badges & Achievements
+          </h3>
+          <div id="badgesContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ========================================================
+           VIEW 2: CONCEPT SIMPLIFIER (CORE AI SCAFFOLDING)
+           ======================================================== -->
+      <div id="view-simplifier" class="view-panel hidden space-y-6">
+
+        <!-- Simplifier Input Card -->
+        <div class="p-6 rounded-3xl bg-slate-900 border border-slate-800 shadow-lg space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                <span>💡</span> AI Concept Simplifier & Intuition Engine
+              </h2>
+              <p class="text-xs text-slate-400">Deconstruct any intimidating topic into intuitive analogies, visual steps, LaTeX formulas, and common pitfalls.</p>
+            </div>
+            
+            <!-- Depth Selector -->
+            <div class="flex items-center gap-1.5 p-1 rounded-xl bg-slate-800 border border-slate-700 text-xs">
+              <button onclick="setDepth('eli5')" id="depth-eli5" class="px-3 py-1 rounded-lg font-medium text-slate-400 hover:text-white transition">ELI5</button>
+              <button onclick="setDepth('balanced')" id="depth-balanced" class="px-3 py-1 rounded-lg font-medium bg-brand-600 text-white shadow transition">Balanced</button>
+              <button onclick="setDepth('deep_dive')" id="depth-deep_dive" class="px-3 py-1 rounded-lg font-medium text-slate-400 hover:text-white transition">Deep Dive</button>
+              <button onclick="setDepth('academic')" id="depth-academic" class="px-3 py-1 rounded-lg font-medium text-slate-400 hover:text-white transition">Academic</button>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3">
+            <div class="relative flex-1">
+              <input type="text" id="simplifierInput" 
+                     placeholder="Enter any concept, e.g. Dynamic Programming, Fourier Transform, CRISPR, Black-Scholes..." 
+                     class="w-full px-4 py-3 rounded-2xl bg-slate-800 border border-slate-700 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 font-medium text-sm transition">
+            </div>
+            <button onclick="triggerSimplification()" id="simplifySubmitBtn" 
+                    class="px-6 py-3 rounded-2xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-semibold text-sm shadow-lg shadow-brand-500/25 flex items-center justify-center gap-2 transition shrink-0">
+              <span>✨</span> Simplify with AI
+            </button>
+          </div>
+
+          <!-- Suggested Topic Chips -->
+          <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+            <span class="text-slate-500 shrink-0 font-medium">Quick Pick:</span>
+            <button onclick="selectQuickTopic('Dynamic Programming')" class="px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition shrink-0">⚡ Dynamic Programming</button>
+            <button onclick="selectQuickTopic('Attention Mechanism in Transformers')" class="px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition shrink-0">🤖 Attention Mechanism</button>
+            <button onclick="selectQuickTopic('Quantum Superposition & Entanglement')" class="px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition shrink-0">🌌 Quantum Entanglement</button>
+            <button onclick="selectQuickTopic('Fourier Transform')" class="px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition shrink-0">〰️ Fourier Transform</button>
+            <button onclick="selectQuickTopic('CRISPR-Cas9 Gene Editing')" class="px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition shrink-0">🧬 CRISPR-Cas9</button>
+          </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="simplifierLoading" class="hidden py-16 flex flex-col items-center justify-center space-y-4">
+          <div class="w-12 h-12 border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
+          <p class="text-sm text-slate-400 font-medium animate-pulse">Deconstructing cognitive layers, formulating analogies & equations...</p>
+        </div>
+
+        <!-- Simplification Results Container -->
+        <div id="simplifierResult" class="hidden space-y-6">
+
+          <!-- Concept Header Card with Read Aloud Button -->
+          <div class="p-6 rounded-3xl bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950/40 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span id="resSubjectBadge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-500/20 text-brand-300 border border-brand-500/30">Computer Science</span>
+                <span class="text-xs text-slate-400">• Verified Syllabus Ready</span>
+              </div>
+              <h2 id="resTopicTitle" class="text-2xl font-extrabold text-white">Dynamic Programming</h2>
+            </div>
+            
+            <div class="flex items-center gap-2">
+              <!-- Web Speech API Read Aloud -->
+              <button onclick="speakExplanation()" id="voiceSpeechBtn" 
+                      class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition">
+                <span id="voiceIcon">🔊</span>
+                <span id="voiceText">Listen (Audio)</span>
+              </button>
+
+              <!-- Ask Socratic Tutor About This -->
+              <button onclick="sendToTutorFromTopic()" 
+                      class="px-3.5 py-2 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/30 text-xs font-semibold flex items-center gap-1.5 transition">
+                <span>🎓</span>
+                <span>Ask Socratic Tutor</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Multi-Tier Tabs Navigation -->
+          <div class="flex border-b border-slate-800 gap-2 overflow-x-auto pb-1 text-xs font-semibold">
+            <button onclick="switchConceptTab('eli5')" id="tab-eli5" class="concept-tab active px-4 py-2.5 rounded-t-xl transition flex items-center gap-2">
+              <span>🧒</span> ELI5 Summary
+            </button>
+            <button onclick="switchConceptTab('analogy')" id="tab-analogy" class="concept-tab px-4 py-2.5 rounded-t-xl transition flex items-center gap-2">
+              <span>🧩</span> Real-World Analogy
+            </button>
+            <button onclick="switchConceptTab('steps')" id="tab-steps" class="concept-tab px-4 py-2.5 rounded-t-xl transition flex items-center gap-2">
+              <span>🪜</span> Step-by-Step Flow
+            </button>
+            <button onclick="switchConceptTab('formulas')" id="tab-formulas" class="concept-tab px-4 py-2.5 rounded-t-xl transition flex items-center gap-2">
+              <span>📐</span> Mathematical Depth
+            </button>
+            <button onclick="switchConceptTab('misconceptions')" id="tab-misconceptions" class="concept-tab px-4 py-2.5 rounded-t-xl transition flex items-center gap-2">
+              <span>⚠️</span> Common Pitfalls
+            </button>
+            <button onclick="switchConceptTab('diagram')" id="tab-diagram" class="concept-tab px-4 py-2.5 rounded-t-xl transition flex items-center gap-2">
+              <span>📊</span> Visual Diagram
+            </button>
+          </div>
+
+          <!-- Tab 1: ELI5 -->
+          <div id="content-eli5" class="tab-content p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+            <div class="flex items-center gap-2 text-brand-400 font-semibold text-sm">
+              <span>🧒</span> Explain Like I'm 5 (Zero Jargon)
+            </div>
+            <p id="resEli5Summary" class="text-slate-200 leading-relaxed text-base font-normal">
+              <!-- Injected -->
+            </p>
+            <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700/60 space-y-1">
+              <span class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+                <span>💡</span> The Core "Aha!" Intuition:
+              </span>
+              <p id="resKeyIntuition" class="text-xs text-slate-300 leading-relaxed">
+                <!-- Injected -->
+              </p>
+            </div>
+          </div>
+
+          <!-- Tab 2: Analogy -->
+          <div id="content-analogy" class="tab-content hidden p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+            <div class="flex items-center gap-2 text-amber-400 font-semibold text-sm">
+              <span>🧩</span> Relatable Everyday Analogy
+            </div>
+            <div class="p-5 rounded-2xl bg-amber-500/5 border border-amber-500/20 text-slate-200 leading-relaxed text-base space-y-3">
+              <p id="resAnalogyText"></p>
+            </div>
+          </div>
+
+          <!-- Tab 3: Step-by-Step Breakdown -->
+          <div id="content-steps" class="tab-content hidden p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+            <div class="flex items-center gap-2 text-emerald-400 font-semibold text-sm">
+              <span>🪜</span> Algorithmic Execution Breakdown
+            </div>
+            <div id="resStepsContainer" class="space-y-3">
+              <!-- Injected -->
+            </div>
+          </div>
+
+          <!-- Tab 4: Mathematical Depth & LaTeX -->
+          <div id="content-formulas" class="tab-content hidden p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+            <div class="flex items-center gap-2 text-purple-400 font-semibold text-sm">
+              <span>📐</span> Rigorous Mathematical Formulation & Complexity
+            </div>
+            <div class="p-4 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-slate-300 leading-relaxed">
+              <p id="resTechnicalDepth"></p>
+            </div>
+            <div class="space-y-3">
+              <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Governing Equations (LaTeX)</h4>
+              <div id="resFormulasContainer" class="space-y-2">
+                <!-- Injected LaTeX -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab 5: Common Misconceptions -->
+          <div id="content-misconceptions" class="tab-content hidden p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+            <div class="flex items-center gap-2 text-rose-400 font-semibold text-sm">
+              <span>⚠️</span> High-Yield Exam Pitfalls & Misconceptions
+            </div>
+            <div id="resMisconceptionsContainer" class="space-y-3">
+              <!-- Injected -->
+            </div>
+          </div>
+
+          <!-- Tab 6: Visual Diagram -->
+          <div id="content-diagram" class="tab-content hidden p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-brand-400 font-semibold text-sm flex items-center gap-2">
+                <span>📊</span> Architecture & Process Diagram
+              </span>
+              <span id="resDiagramDesc" class="text-xs text-slate-400"></span>
+            </div>
+            <div class="p-6 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center overflow-x-auto min-h-[220px]">
+              <div id="mermaidDiagramTarget" class="mermaid w-full flex justify-center">
+                <!-- Injected Mermaid -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Real World Applications Shelf -->
+          <div class="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+              <span>🌍</span> Where This Is Used in the Real World
+            </h4>
+            <div id="resApplicationsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <!-- Injected -->
+            </div>
+          </div>
+
+          <!-- Bottom Action Buttons: Save Flashcards or Take Concept Quiz -->
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-2xl bg-brand-950/30 border border-brand-500/20">
+            <div>
+              <h4 class="text-sm font-bold text-white">Test Your Understanding Right Now</h4>
+              <p class="text-xs text-slate-300">Reinforce your memory with calibrated conceptual questions and flashcards.</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <button onclick="saveAllCurrentFlashcards()" class="px-4 py-2 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-500/30 text-xs font-semibold flex items-center gap-1.5 transition">
+                <span>📇</span> Add Flashcards to Deck
+              </button>
+              <button onclick="launchQuizForCurrentConcept()" class="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow-lg shadow-brand-500/20 flex items-center gap-1.5 transition">
+                <span>🏆</span> Take Concept Quiz
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ========================================================
+           VIEW 3: SOCRATIC AI TUTOR (SUPERCHARGED INTERACTIVE)
+           ======================================================== -->
+      <div id="view-tutor" class="view-panel hidden h-[calc(100vh-140px)] flex flex-col rounded-3xl bg-slate-900 border border-slate-800 shadow-xl overflow-hidden">
+        
+        <!-- Tutor Chat Header -->
+        <div class="p-4 bg-slate-850 border-b border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="relative">
+              <div id="tutorPersonaAvatar" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-white font-bold text-lg shadow-md shadow-emerald-500/20 transition-all duration-300">
+                🦉
+              </div>
+              <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-slate-900"></span>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="font-bold text-sm text-white" id="tutorPersonaName">Socratic Sage</h3>
+                <span id="tutorGeminiBadge" onclick="openGeminiModal()" class="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold flex items-center gap-1 cursor-pointer hover:bg-emerald-500/30 transition shadow-sm" title="Click to configure Google Gemini AI Key">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Active AI
+                </span>
+              </div>
+              <div class="flex items-center gap-2 text-[11px] text-slate-400">
+                <span id="tutorActiveTopic">Context: General Concept</span>
+                <span class="text-slate-600">•</span>
+                <button onclick="changeTutorTopicPrompt()" class="text-brand-400 hover:text-brand-300 underline font-medium">Change Topic</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controls: Personas, Rigor, Clear, Export -->
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- Gemini Key Config Button -->
+            <button onclick="openGeminiModal()" title="Configure Google Gemini AI API Provider" class="px-2.5 py-1 rounded-xl bg-gradient-to-r from-blue-600/30 to-indigo-600/30 hover:from-blue-600/50 hover:to-indigo-600/50 text-indigo-300 border border-indigo-500/30 text-xs font-semibold flex items-center gap-1.5 transition shadow">
+              <span>⚡</span> <span class="hidden sm:inline">Gemini API</span>
+            </button>
+            <!-- Persona Switcher -->
+            <div class="flex items-center gap-1 p-1 rounded-xl bg-slate-800 border border-slate-700 text-xs overflow-x-auto">
+              <button onclick="setTutorMode('socratic')" id="mode-socratic" class="px-2.5 py-1 rounded-lg font-medium bg-emerald-600 text-white transition flex items-center gap-1">
+                <span>🦉</span> <span class="hidden sm:inline">Socratic</span>
+              </button>
+              <button onclick="setTutorMode('eli5_buddy')" id="mode-eli5_buddy" class="px-2.5 py-1 rounded-lg font-medium text-slate-400 hover:text-white transition flex items-center gap-1">
+                <span>🧒</span> <span class="hidden sm:inline">ELI5</span>
+              </button>
+              <button onclick="setTutorMode('drill_sergeant')" id="mode-drill_sergeant" class="px-2.5 py-1 rounded-lg font-medium text-slate-400 hover:text-white transition flex items-center gap-1">
+                <span>⚡</span> <span class="hidden sm:inline">Quizzer</span>
+              </button>
+              <button onclick="setTutorMode('exam_prep')" id="mode-exam_prep" class="px-2.5 py-1 rounded-lg font-medium text-slate-400 hover:text-white transition flex items-center gap-1">
+                <span>🏛️</span> <span class="hidden sm:inline">Exam</span>
+              </button>
+              <button onclick="setTutorMode('code_math')" id="mode-code_math" class="px-2.5 py-1 rounded-lg font-medium text-slate-400 hover:text-white transition flex items-center gap-1">
+                <span>💻</span> <span class="hidden sm:inline">Code/Math</span>
+              </button>
+            </div>
+
+            <!-- Rigor Level Selector -->
+            <select id="tutorDifficultySelect" onchange="setTutorDifficulty(this.value)" class="px-2.5 py-1 rounded-xl bg-slate-800 border border-slate-700 text-xs text-slate-300 focus:outline-none">
+              <option value="intro">🐣 Intro</option>
+              <option value="high_school">🎓 High School</option>
+              <option value="university" selected>🔬 University</option>
+            </select>
+
+            <!-- Export & Clear buttons -->
+            <button onclick="exportChatNotes()" title="Export chat as study notes" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs transition">
+              📥
+            </button>
+            <button onclick="clearTutorChat()" title="Clear conversation" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs transition">
+              🗑️
+            </button>
+          </div>
+        </div>
+
+        <!-- Chat Message Log -->
+        <div id="tutorMessagesContainer" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+          
+          <!-- Initial Welcome Message -->
+          <div class="flex gap-3 max-w-3xl">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center shrink-0 text-sm">
+              🦉
+            </div>
+            <div class="space-y-2 flex-1">
+              <div class="p-4 rounded-2xl rounded-tl-sm bg-slate-800 text-slate-200 text-sm leading-relaxed border border-slate-700">
+                Hello <strong id="tutorGreetName" class="text-brand-300">Scholar</strong>! I am your interactive AI Mentor.
+                I won't just dump answers on you — we will formulate analogies, test your intuition, trace math/code, and prepare you for tricky exam traps.
+                <br><br>
+                What concept would you like to explore or test today?
+              </div>
+              <div class="flex flex-wrap gap-1.5 pt-1">
+                <button onclick="quickPromptToTutor('Why do we need Dynamic Programming instead of simple recursion?')" class="px-3 py-1 text-xs rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
+                  💬 Why DP over recursion?
+                </button>
+                <button onclick="quickPromptToTutor('Can you explain the intuition behind Attention Mechanism?')" class="px-3 py-1 text-xs rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
+                  💬 Intuition behind Attention
+                </button>
+                <button onclick="quickPromptToTutor('Test my understanding with a challenging question on Quantum Superposition!')" class="px-3 py-1 text-xs rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
+                  💬 Test me on Quantum
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Voice Speech Recognition Listening Status Toast -->
+        <div id="voiceListeningIndicator" class="hidden px-4 py-2 bg-emerald-500/20 border-t border-emerald-500/30 flex items-center justify-between text-xs text-emerald-300">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+            <span class="font-semibold">Listening to your voice... Speak clearly into your microphone!</span>
+          </div>
+          <button onclick="stopVoiceRecognition()" class="text-xs bg-slate-800 px-2 py-0.5 rounded text-white hover:bg-slate-700">Stop</button>
+        </div>
+
+        <!-- Tutor Input Bar -->
+        <div class="p-4 bg-slate-850 border-t border-slate-800 space-y-3">
+          <div class="flex items-center gap-2">
+            
+            <!-- Voice Dictation Microphone Button -->
+            <button onclick="toggleVoiceRecognition()" id="tutorMicBtn" title="Speak to AI Tutor (Speech-to-Text)" 
+                    class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center justify-center shrink-0">
+              <span id="tutorMicIcon">🎤</span>
+            </button>
+
+            <!-- Text Input -->
+            <input type="text" id="tutorChatInput" 
+                   placeholder="Ask a question, ask for an analogy, or test your reasoning..." 
+                   class="flex-1 px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+                   onkeydown="handleTutorKey(event)">
+
+            <!-- Send Button -->
+            <button onclick="sendTutorMessage()" id="tutorSendBtn" 
+                    class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm shadow-md shadow-emerald-500/20 flex items-center gap-1.5 transition shrink-0">
+              <span>Send</span>
+              <span>→</span>
+            </button>
+          </div>
+
+          <div class="flex items-center justify-between text-[11px] text-slate-400 px-1">
+            <div class="flex items-center gap-3">
+              <span>💡 <strong class="text-slate-300">Microphone 🎤</strong> speech-to-text active</span>
+              <span>•</span>
+              <span>🔊 WebSpeech audio playback on every reply</span>
+            </div>
+            <span class="text-emerald-400 font-medium">Click 📇 on any answer to turn into a Flashcard!</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ========================================================
+           VIEW 4: INTERACTIVE SANDBOXES & SIMULATIONS
+           ======================================================== -->
+      <div id="view-simulations" class="view-panel hidden space-y-6">
+
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 class="text-xl font-bold text-white flex items-center gap-2">
+              <span>🧪</span> Interactive Concept Sandboxes
+            </h2>
+            <p class="text-xs text-slate-400">Play with dynamic parameters to develop visceral physical & mathematical intuition.</p>
+          </div>
+          
+          <!-- Simulation Switcher -->
+          <div class="flex items-center gap-1.5 p-1 rounded-xl bg-slate-800 border border-slate-700 text-xs overflow-x-auto">
+            <button onclick="switchSimulation('algo')" id="simtab-algo" class="px-3 py-1 rounded-lg font-medium bg-brand-600 text-white transition">Algorithm Sorter</button>
+            <button onclick="switchSimulation('physics')" id="simtab-physics" class="px-3 py-1 rounded-lg font-medium text-slate-400 hover:text-white transition">Pendulum & Energy</button>
+            <button onclick="switchSimulation('econ')" id="simtab-econ" class="px-3 py-1 rounded-lg font-medium text-slate-400 hover:text-white transition">Supply & Demand</button>
+            <button onclick="switchSimulation('attention')" id="simtab-attention" class="px-3 py-1 rounded-lg font-medium text-slate-400 hover:text-white transition">Attention Matrix</button>
+          </div>
+        </div>
+
+        <!-- SIM 1: Genuinely Interactive Algorithm Visualizer (Sorting & Invariant) -->
+        <div id="sim-algo" class="sim-panel p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <span>⚡</span> Algorithm Invariant & Step-by-Step Execution
+              </h3>
+              <p class="text-xs text-slate-400">Step forward/backward, customize the array, and inspect live pseudocode highlighting in real time.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <select id="algoSelect" onchange="resetAlgoSim()" class="px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white">
+                <option value="bubble">Bubble Sort — O(n²)</option>
+                <option value="insertion">Insertion Sort — O(n²)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Custom Array Input & Presets -->
+          <div class="flex flex-wrap items-center gap-2 p-3 rounded-2xl bg-slate-950/70 border border-slate-800 text-xs">
+            <span class="text-slate-400 font-semibold">Custom Array:</span>
+            <input type="text" id="customArrayInput" value="48, 15, 86, 32, 60, 24, 75, 10, 92, 40" placeholder="e.g. 50, 20, 80, 10" class="px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-white font-mono text-xs w-64 focus:outline-none focus:ring-1 focus:ring-brand-500">
+            <button onclick="applyCustomArray()" class="px-3 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold transition">Apply</button>
+            <span class="text-slate-700 mx-1">|</span>
+            <span class="text-slate-400 font-medium">Presets:</span>
+            <button onclick="setAlgoPreset('random')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">🎲 Random</button>
+            <button onclick="setAlgoPreset('reverse')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">📉 Reversed</button>
+            <button onclick="setAlgoPreset('nearly')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">📈 Nearly Sorted</button>
+          </div>
+
+          <!-- Interactive Playback Controls Bar -->
+          <div class="flex flex-wrap items-center justify-between gap-3 text-xs bg-slate-950/60 p-3 rounded-2xl border border-slate-800">
+            <div class="flex items-center gap-2">
+              <button onclick="stepBackwardAlgo()" id="stepBackwardBtn" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium transition flex items-center gap-1 shadow">
+                <span>⏮</span> Step Back
+              </button>
+              <button onclick="toggleAlgoPlay()" id="algoPlayBtn" class="px-4 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold transition flex items-center gap-1 shadow">
+                <span>▶</span> Play
+              </button>
+              <button onclick="stepForwardAlgo()" id="stepForwardBtn" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium transition flex items-center gap-1 shadow">
+                <span>⏭</span> Step Forward
+              </button>
+              <button onclick="resetAlgoSim()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition">
+                ↺ Reset
+              </button>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-slate-400">Step Speed:</span>
+              <input type="range" id="algoSpeedSlider" min="30" max="600" step="20" value="150" oninput="setAlgoSpeed(this.value)" class="w-24 accent-brand-500">
+              <span id="algoSpeedVal" class="text-brand-400 font-mono w-14 text-right">150ms</span>
+            </div>
+          </div>
+
+          <!-- Array Bar Canvas & Live Pseudocode Side-by-Side -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div class="lg:col-span-2 h-64 bg-slate-950 rounded-2xl border border-slate-800 p-4 flex items-end justify-center gap-2 overflow-x-auto" id="algoBarsContainer">
+              <!-- Dynamic bars injected -->
+            </div>
+            <div class="h-64 bg-slate-950 rounded-2xl border border-slate-800 p-3 overflow-y-auto flex flex-col justify-center">
+              <span class="text-[11px] font-bold text-slate-400 mb-2 uppercase tracking-wider flex items-center justify-between">
+                <span>Active Pseudocode</span>
+                <span class="text-[10px] text-amber-400 font-mono">Line Sync</span>
+              </span>
+              <div id="algoPseudocodeBox" class="space-y-1 font-mono text-xs">
+                <!-- Pseudocode lines injected -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Status & Intuition Callout -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            <div class="p-3 rounded-xl bg-slate-800/60 border border-slate-700/60">
+              <span class="text-slate-400 block">Comparisons:</span>
+              <span id="algoCompCount" class="text-brand-400 font-mono font-bold text-base">0</span>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-800/60 border border-slate-700/60">
+              <span class="text-slate-400 block">Swaps:</span>
+              <span id="algoSwapCount" class="text-emerald-400 font-mono font-bold text-base">0</span>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-800/60 border border-slate-700/60">
+              <span class="text-slate-400 block">Current Invariant:</span>
+              <span id="algoInvariantText" class="text-amber-400 font-medium">Elements to the right are guaranteed sorted</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- SIM 2: Genuinely Interactive Physics Pendulum with Click & Drag Release -->
+        <div id="sim-physics" class="sim-panel hidden p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <span>⚙️</span> Interactive Pendulum & Energy Conservation
+              </h3>
+              <p class="text-xs text-slate-400">Click and drag the pendulum bob to set any release angle (\(\theta_0\)) and test energy conversion.</p>
+            </div>
+            <button onclick="togglePendulum()" id="pendulumToggleBtn" class="px-4 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow transition">⏸ Pause</button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <div class="h-72 bg-slate-950 rounded-2xl border border-slate-800 flex items-center justify-center relative overflow-hidden group">
+              <div class="absolute top-2 left-2 z-10 px-2.5 py-1 rounded-lg bg-slate-900/80 border border-slate-700 text-[10px] text-brand-300 font-medium flex items-center gap-1.5 shadow">
+                <span>🖱️</span> Drag bob to adjust angle & release
+              </div>
+              <canvas id="pendulumCanvas" width="360" height="280" class="cursor-grab active:cursor-grabbing"></canvas>
+            </div>
+
+            <!-- Physics Sliders & Energy Meters -->
+            <div class="space-y-3.5 text-xs">
+              <div>
+                <div class="flex justify-between text-slate-300 font-medium mb-1">
+                  <span>String Length (L): <span id="lengthVal" class="text-brand-400 font-mono">150 px</span></span>
+                </div>
+                <input type="range" id="lengthSlider" min="80" max="210" step="5" value="150" class="w-full accent-brand-500">
+              </div>
+
+              <div>
+                <div class="flex justify-between text-slate-300 font-medium mb-1">
+                  <span>Gravity (g): <span id="gravityVal" class="text-brand-400 font-mono">9.8 m/s²</span></span>
+                </div>
+                <input type="range" id="gravitySlider" min="2" max="25" step="0.5" value="9.8" class="w-full accent-brand-500">
+              </div>
+
+              <div>
+                <div class="flex justify-between text-slate-300 font-medium mb-1">
+                  <span>Damping (Friction): <span id="dampingVal" class="text-brand-400 font-mono">0.001</span></span>
+                </div>
+                <input type="range" id="dampingSlider" min="0" max="0.01" step="0.0005" value="0.001" class="w-full accent-brand-500">
+              </div>
+
+              <!-- Energy Bar breakdown -->
+              <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700/60 space-y-2">
+                <span class="font-bold text-slate-300 block">Total Energy Conservation \(E = K + U\)</span>
+                
+                <div class="space-y-1">
+                  <div class="flex justify-between text-[11px] text-emerald-400">
+                    <span>Kinetic Energy (K)</span>
+                    <span id="keVal" class="font-mono">54 J</span>
+                  </div>
+                  <div class="w-full bg-slate-700 h-2 rounded-full overflow-hidden">
+                    <div id="keBar" class="bg-emerald-500 h-full" style="width: 50%"></div>
+                  </div>
+                </div>
+
+                <div class="space-y-1">
+                  <div class="flex justify-between text-[11px] text-blue-400">
+                    <span>Potential Energy (U)</span>
+                    <span id="peVal" class="font-mono">46 J</span>
+                  </div>
+                  <div class="w-full bg-slate-700 h-2 rounded-full overflow-hidden">
+                    <div id="peBar" class="bg-blue-500 h-full" style="width: 50%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SIM 3: Supply & Demand Equilibrium Sandbox -->
+        <div id="sim-econ" class="sim-panel hidden p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 class="text-base font-bold text-white">Supply, Demand & Price Equilibrium Simulator</h3>
+              <p class="text-xs text-slate-400">Adjust price levels or demand shifts to see market clearing, surpluses, and shortages in real-time.</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <div class="h-72 bg-slate-950 rounded-2xl border border-slate-800 flex items-center justify-center p-2">
+              <canvas id="econCanvas" width="360" height="280"></canvas>
+            </div>
+
+            <div class="space-y-4 text-xs">
+              <div>
+                <div class="flex justify-between text-slate-300 font-medium mb-1">
+                  <span>Market Price Level (P): <span id="econPriceLabel" class="text-brand-400 font-mono">$50</span></span>
+                </div>
+                <input type="range" id="econPriceSlider" min="10" max="90" value="50" oninput="updateEconSim()" class="w-full accent-brand-500">
+              </div>
+
+              <div>
+                <div class="flex justify-between text-slate-300 font-medium mb-1">
+                  <span>Demand Shift (Consumer Tastes): <span id="econDemandShiftLabel" class="text-brand-400 font-mono">0</span></span>
+                </div>
+                <input type="range" id="econDemandSlider" min="-30" max="30" value="0" oninput="updateEconSim()" class="w-full accent-brand-500">
+              </div>
+
+              <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700/60 space-y-2">
+                <div class="flex justify-between font-bold text-slate-200">
+                  <span>Market Status:</span>
+                  <span id="econStatusBadge" class="text-emerald-400">Equilibrium (Market Clears)</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-300 pt-1">
+                  <div>Quantity Demanded: <strong id="econQd" class="text-white">50 units</strong></div>
+                  <div>Quantity Supplied: <strong id="econQs" class="text-white">50 units</strong></div>
+                  <div>Consumer Surplus: <strong id="econCs" class="text-blue-400">$1,250</strong></div>
+                  <div>Producer Surplus: <strong id="econPs" class="text-emerald-400">$1,250</strong></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SIM 4: Transformer Attention Matrix Sandbox -->
+        <div id="sim-attention" class="sim-panel hidden p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-4">
+          <div>
+            <h3 class="text-base font-bold text-white">Interactive Self-Attention Spotlight Sandbox</h3>
+            <p class="text-xs text-slate-400">Hover over any word in the sentence to visualize which other words it pays attention to according to Softmax weights.</p>
+          </div>
+
+          <div class="p-6 bg-slate-950 rounded-2xl border border-slate-800 space-y-6">
+            <!-- Sentence Tokens -->
+            <div class="flex flex-wrap items-center justify-center gap-3" id="attentionTokensRow">
+              <!-- Dynamically populated tokens -->
+            </div>
+
+            <!-- Heatmap Display -->
+            <div class="flex flex-col items-center justify-center">
+              <h4 class="text-xs font-semibold text-slate-400 mb-3" id="attentionActiveWord">Selected Token: "bank"</h4>
+              <div class="w-full max-w-lg bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2" id="attentionWeightsBars">
+                <!-- Injected weights -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ========================================================
+           VIEW 5: ADAPTIVE QUIZ
+           ======================================================== -->
+      <div id="view-quiz" class="view-panel hidden space-y-6">
+
+        <div class="p-6 rounded-3xl bg-slate-900 border border-slate-800 shadow-lg space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                <span>🏆</span> Adaptive Concept Quiz & Calibration
+              </h2>
+              <p class="text-xs text-slate-400">Test intuition, eradicate misconceptions, and earn mastery XP.</p>
+            </div>
+            
+            <div class="flex items-center gap-2">
+              <input type="text" id="quizTopicInput" placeholder="Topic to test..." value="Dynamic Programming" class="px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white">
+              <button onclick="startNewQuiz()" class="px-4 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow transition">New Quiz</button>
+            </div>
+          </div>
+
+          <!-- Active Quiz Container -->
+          <div id="quizActiveCard" class="space-y-6 pt-2">
+            
+            <!-- Quiz Progress Bar -->
+            <div class="space-y-1.5">
+              <div class="flex justify-between text-xs text-slate-400">
+                <span>Question <strong id="quizCurrentIndex" class="text-white">1</strong> of <strong id="quizTotalCount" class="text-white">2</strong></span>
+                <span id="quizTopicLabel" class="text-brand-400 font-semibold">Dynamic Programming</span>
+              </div>
+              <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                <div id="quizProgressBar" class="bg-brand-500 h-full transition-all duration-300" style="width: 50%"></div>
+              </div>
+            </div>
+
+            <!-- Question Text -->
+            <div class="p-5 rounded-2xl bg-slate-850 border border-slate-700/80">
+              <h3 id="quizQuestionText" class="text-base font-semibold text-white leading-relaxed">
+                What two essential properties must a problem possess to be solvable by Dynamic Programming?
+              </h3>
+            </div>
+
+            <!-- Options Grid -->
+            <div id="quizOptionsContainer" class="space-y-2.5">
+              <!-- Dynamically populated options -->
+            </div>
+
+            <!-- Quiz Explanatory Feedback Banner (Appears after answer) -->
+            <div id="quizFeedbackBanner" class="hidden p-4 rounded-xl border space-y-2">
+              <div class="flex items-center gap-2 font-bold text-sm" id="quizFeedbackStatus">
+                <!-- Status icon + text -->
+              </div>
+              <p id="quizFeedbackExplanation" class="text-xs text-slate-200 leading-relaxed"></p>
+            </div>
+
+            <!-- Next Question / Submit Button -->
+            <div class="flex justify-end pt-2">
+              <button onclick="handleQuizNext()" id="quizNextBtn" class="px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow-lg shadow-brand-500/25 transition">
+                Next Question →
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Quiz Completion Result Screen -->
+          <div id="quizCompleteScreen" class="hidden py-8 flex flex-col items-center justify-center text-center space-y-4">
+            <div class="w-20 h-20 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center text-3xl shadow-lg">
+              🎉
+            </div>
+            <div class="space-y-1">
+              <h3 class="text-2xl font-extrabold text-white">Concept Mastered!</h3>
+              <p class="text-sm text-slate-400">You scored <strong id="quizFinalScore" class="text-brand-400">2 / 2 (100%)</strong></p>
+            </div>
+            <div class="p-4 rounded-2xl bg-slate-800 border border-slate-700 max-w-sm w-full flex items-center justify-around text-xs">
+              <div>
+                <span class="text-slate-400 block">XP Earned</span>
+                <span id="quizEarnedXP" class="text-base font-bold text-amber-400">+110 XP</span>
+              </div>
+              <div class="h-8 w-px bg-slate-700"></div>
+              <div>
+                <span class="text-slate-400 block">Streak</span>
+                <span class="text-base font-bold text-emerald-400">🔥 5 Days</span>
+              </div>
+            </div>
+
+            <!-- Personalized Remediation & AI Action Plan Card (Connected to Tutor) -->
+            <div id="quizRemediationContainer" class="hidden p-5 rounded-2xl bg-gradient-to-r from-slate-900 via-rose-950/30 to-slate-900 border border-rose-500/30 text-left max-w-xl w-full space-y-3 shadow-lg">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-rose-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <span>🎯</span> Personalized Remediation Action Plan
+                </span>
+                <span id="remediationScoreBadge" class="text-xs px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-semibold border border-rose-500/30">Focus Identified</span>
+              </div>
+              <p id="remediationActionPlanText" class="text-xs text-slate-200 leading-relaxed"></p>
+              
+              <div>
+                <span class="text-[11px] text-slate-400 block mb-1.5 font-medium">Concepts Requiring Targeted Attention:</span>
+                <div id="remediationWeakTags" class="flex flex-wrap gap-1.5">
+                  <!-- Weak concepts tags injected -->
+                </div>
+              </div>
+
+              <div class="pt-2 flex flex-wrap gap-2.5 border-t border-slate-800">
+                <button onclick="launchRemediationTutor()" id="launchTutorRemediationBtn" class="px-4 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white text-xs font-bold shadow-lg shadow-brand-500/25 flex items-center gap-2 transition hover:scale-[1.02]">
+                  <span>🤖</span> Launch Targeted Socratic Tutor
+                </button>
+                <button onclick="navigateTo('flashcards')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5">
+                  <span>📇</span> Practice Flashcard Deck
+                </button>
+              </div>
+            </div>
+
+            <div class="flex gap-3 pt-2">
+              <button onclick="startNewQuiz()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition">Retake Quiz</button>
+              <button onclick="navigateTo('dashboard')" class="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow transition">Back to Dashboard</button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ========================================================
+           VIEW 6: SPACED REPETITION FLASHCARDS
+           ======================================================== -->
+      <div id="view-flashcards" class="view-panel hidden space-y-6">
+
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 class="text-xl font-bold text-white flex items-center gap-2">
+              <span>📇</span> Spaced Repetition Study Deck (SM-2 Algorithm)
+            </h2>
+            <p class="text-xs text-slate-400">Review high-yield flashcards calibrated to your forgetting curve.</p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <select id="flashcardFilterSubject" onchange="loadDueFlashcards()" class="px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white">
+              <option value="all">All Domains</option>
+              <option value="Computer Science">Computer Science</option>
+              <option value="Physics">Physics</option>
+              <option value="Mathematics">Mathematics</option>
+              <option value="Biology">Biology</option>
+              <option value="Economics">Economics</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 3D Interactive Flip Card Container -->
+        <div class="max-w-xl mx-auto py-4">
+          <div id="flashcardScene" class="flashcard-scene cursor-pointer" onclick="flipFlashcard()">
+            <div id="flashcardCard" class="flashcard-inner">
+              
+              <!-- Card Front -->
+              <div class="flashcard-face flashcard-front p-8 flex flex-col justify-between">
+                <div class="flex justify-between items-center text-xs">
+                  <span id="fcTopicTag" class="px-2.5 py-0.5 rounded-full bg-brand-500/20 text-brand-300 font-semibold border border-brand-500/30">Computer Science</span>
+                  <span class="text-slate-400">Click to flip 🔄</span>
+                </div>
+                <div class="my-auto text-center py-6">
+                  <h3 id="fcFrontText" class="text-lg sm:text-xl font-bold text-white leading-relaxed">
+                    What two properties define a Dynamic Programming problem?
+                  </h3>
+                </div>
+                <div class="text-center text-xs text-slate-500">
+                  Card <span id="fcCurrentIndex">1</span> of <span id="fcTotalCount">8</span>
+                </div>
+              </div>
+
+              <!-- Card Back -->
+              <div class="flashcard-face flashcard-back p-8 flex flex-col justify-between">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="text-emerald-400 font-bold">Answer & Key Mnemonic</span>
+                  <span class="text-slate-400">Click to flip 🔄</span>
+                </div>
+                <div class="my-auto text-center py-4 space-y-4">
+                  <p id="fcBackText" class="text-base font-medium text-slate-100 whitespace-pre-line leading-relaxed">
+                    1. Optimal Substructure
+                    2. Overlapping Subproblems
+                  </p>
+                  <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300">
+                    💡 <strong>Memory Trick:</strong> <span id="fcMnemonicText">Think OS: Optimal Substructure + Shared Subproblems</span>
+                  </div>
+                </div>
+                <div class="text-center text-xs text-slate-400">
+                  Select your recall ease below:
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- SM-2 Recall Rating Buttons -->
+          <div class="grid grid-cols-4 gap-2 pt-6">
+            <button onclick="rateFlashcard(1)" class="py-2.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/30 text-rose-300 text-xs font-semibold transition">
+              ❌ Forgot<br><span class="text-[10px] text-slate-400">&lt; 10 min</span>
+            </button>
+            <button onclick="rateFlashcard(2)" class="py-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 text-amber-300 text-xs font-semibold transition">
+              ⚠️ Hard<br><span class="text-[10px] text-slate-400">1 Day</span>
+            </button>
+            <button onclick="rateFlashcard(3)" class="py-2.5 rounded-xl bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/30 text-blue-300 text-xs font-semibold transition">
+              👍 Good<br><span class="text-[10px] text-slate-400">3 Days</span>
+            </button>
+            <button onclick="rateFlashcard(5)" class="py-2.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/30 text-emerald-300 text-xs font-semibold transition">
+              🌟 Easy<br><span class="text-[10px] text-slate-400">6 Days</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ========================================================
+           VIEW 7: KNOWLEDGE MAP (CONCEPT GRAPH)
+           ======================================================== -->
+      <div id="view-mindmap" class="view-panel hidden space-y-6">
+
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 class="text-xl font-bold text-white flex items-center gap-2">
+              <span>🌐</span> Interactive Knowledge Graph & Prerequisite Map
+            </h2>
+            <p class="text-xs text-slate-400">Visualize how fundamental theorems connect across disciplines.</p>
+          </div>
+          
+          <div class="flex items-center gap-2">
+            <button onclick="resetGraphView()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition">Fit to Screen</button>
+            <button onclick="loadConceptMap('Global Knowledge Map')" class="px-3 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow transition">Global Constellation</button>
+          </div>
+        </div>
+
+        <div class="relative h-[540px] bg-slate-950 rounded-3xl border border-slate-800 overflow-hidden shadow-inner">
+          <canvas id="knowledgeGraphCanvas" class="w-full h-full cursor-grab active:cursor-grabbing"></canvas>
+          
+          <!-- Graph Legend Floating Overlay -->
+          <div class="absolute bottom-4 left-4 p-3 rounded-2xl bg-slate-900/90 border border-slate-800 text-xs space-y-1.5 backdrop-blur-md">
+            <span class="font-bold text-slate-300 block">Domains & Dependencies</span>
+            <div class="flex items-center gap-2 text-slate-400"><span class="w-3 h-3 rounded-full bg-blue-500"></span> Computer Science</div>
+            <div class="flex items-center gap-2 text-slate-400"><span class="w-3 h-3 rounded-full bg-purple-500"></span> Physics</div>
+            <div class="flex items-center gap-2 text-slate-400"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Mathematics</div>
+            <div class="flex items-center gap-2 text-slate-400"><span class="w-3 h-3 rounded-full bg-amber-500"></span> Biology</div>
+            <div class="flex items-center gap-2 text-slate-400"><span class="w-3 h-3 rounded-full bg-pink-500"></span> Economics</div>
+          </div>
+
+          <!-- Click to inspect hint -->
+          <div class="absolute top-4 right-4 px-3 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 text-[11px] text-slate-400">
+            Click on any node to jump to its deep-dive simplification!
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ========================================================
+           VIEW 8: SMART NOTES & CHEATSHEETS (WITH PERSISTENT LIBRARY)
+           ======================================================== -->
+      <div id="view-notes" class="view-panel hidden space-y-6">
+
+        <!-- Subtabs: Generate vs Saved Notes Library -->
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div class="flex items-center gap-2">
+            <button onclick="switchNotesSubTab('generate')" id="notesTab-generate" 
+                    class="px-4 py-2 rounded-xl text-xs font-bold bg-brand-600 text-white shadow transition flex items-center gap-2">
+              <span>⚡</span> Generate Smart Notes
+            </button>
+            <button onclick="switchNotesSubTab('library')" id="notesTab-library" 
+                    class="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white bg-slate-800/60 border border-slate-700/60 transition flex items-center gap-2">
+              <span>📚 Saved Notes Library</span>
+              <span id="savedNotesCountBadge" class="px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-300 text-[10px] font-mono font-bold">0</span>
+            </button>
+          </div>
+          <button onclick="loadSavedNotesLibrary()" class="text-xs text-slate-400 hover:text-white transition flex items-center gap-1">
+            <span>🔄</span> Refresh Library
+          </button>
+        </div>
+
+        <!-- SUBPANEL 1: GENERATE SMART NOTES -->
+        <div id="notesPanel-generate" class="space-y-6">
+
+          <div class="p-6 rounded-3xl bg-slate-900 border border-slate-800 shadow-lg space-y-4">
+            <div>
+              <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                <span>📝</span> Smart Notes & Cheatsheet Generator
+              </h2>
+              <p class="text-xs text-slate-400">Paste your raw lecture notes, slide texts, or textbook excerpts to generate instant summaries, formula sheets, and study cards.</p>
+            </div>
+
+            <div class="space-y-3">
+              <input type="text" id="notesTitleInput" placeholder="Note Title (e.g. CS101: Dynamic Programming & Knapsack Lecture)" class="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-400 text-sm focus:outline-none focus:ring-1 focus:ring-brand-500">
+              <textarea id="notesContentInput" rows="6" placeholder="Paste your raw lecture notes or textbook excerpt here..." class="w-full p-4 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 leading-relaxed"></textarea>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center gap-3 text-xs text-slate-400">
+                <label class="flex items-center gap-1.5 cursor-pointer">
+                  <input type="checkbox" id="notesGenFlashcards" checked class="rounded accent-brand-500">
+                  <span>Auto-save generated flashcards to my study deck</span>
+                </label>
+              </div>
+              <button onclick="processSmartNotes()" id="notesSubmitBtn" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white text-xs font-semibold shadow-lg shadow-brand-500/25 flex items-center gap-2 transition hover:scale-[1.02]">
+                <span>⚡</span> Generate Smart Summary & Cheatsheet
+              </button>
+            </div>
+          </div>
+
+          <!-- Notes Output Container -->
+          <div id="notesResult" class="hidden space-y-6">
+
+            <!-- Result Action Bar: Save to Library & Markdown Export -->
+            <div class="p-4 rounded-2xl bg-slate-850 border border-slate-800 flex flex-wrap items-center justify-between gap-3 shadow">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold text-white" id="currentGeneratedNoteTitle">Generated Synthesis</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/30">Ready</span>
+              </div>
+              <div class="flex flex-wrap items-center gap-2 text-xs">
+                <button onclick="saveCurrentNoteToLibrary()" id="saveNoteBtn" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow-lg shadow-emerald-600/25 flex items-center gap-1.5 transition">
+                  <span>💾</span> Save to Library
+                </button>
+                <button onclick="copyNoteMarkdown()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5 transition">
+                  <span>📋</span> Copy Markdown
+                </button>
+                <button onclick="downloadNoteMarkdown()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5 transition">
+                  <span>📥</span> Download .md
+                </button>
+              </div>
+            </div>
+
+            <!-- Executive Summary -->
+            <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
+              <h3 class="text-sm font-bold text-brand-400 flex items-center gap-2">
+                <span>📋</span> 30-Second Executive Summary
+              </h3>
+              <p id="notesExecSummary" class="text-sm text-slate-200 leading-relaxed"></p>
+            </div>
+
+            <!-- Key Takeaways & Formula Cheatsheet Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
+                <h3 class="text-sm font-bold text-emerald-400 flex items-center gap-2">
+                  <span>🎯</span> High-Yield Takeaways
+                </h3>
+                <ul id="notesTakeawaysList" class="space-y-2 text-xs text-slate-300">
+                  <!-- Injected -->
+                </ul>
+              </div>
+
+              <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
+                <h3 class="text-sm font-bold text-purple-400 flex items-center gap-2">
+                  <span>📐</span> Formula & Invariant Cheatsheet
+                </h3>
+                <div id="notesFormulasList" class="space-y-2">
+                  <!-- Injected LaTeX -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Jargon Glossary -->
+            <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
+              <h3 class="text-sm font-bold text-amber-400 flex items-center gap-2">
+                <span>📖</span> Key Vocabulary & Jargon Glossary
+              </h3>
+              <div id="notesGlossaryGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <!-- Injected -->
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- SUBPANEL 2: SAVED NOTES LIBRARY -->
+        <div id="notesPanel-library" class="hidden space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-slate-900 border border-slate-800">
+            <div>
+              <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <span>📚</span> Permanent Notes & Cheatsheet Archive
+              </h3>
+              <p class="text-xs text-slate-400">All your AI-generated summaries and formula sheets stored securely in SQLite.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <input type="text" id="savedNotesSearchInput" oninput="filterSavedNotes(this.value)" placeholder="Search saved notes..." 
+                     class="px-3.5 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-500 w-56">
+            </div>
+          </div>
+
+          <div id="savedNotesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Dynamically populated saved notes cards -->
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- ========================================================
+       STUDENT PROFILE & LEARNING SETTINGS MODAL
+       ======================================================== -->
+  <div id="profileModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+    <div class="relative w-full max-w-lg rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-xl shadow">
+            ⚙️
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-white">Student Profile & Goal</h3>
+            <p class="text-xs text-slate-400">Personalize your learning avatar, style, and daily targets</p>
+          </div>
+        </div>
+        <button onclick="closeProfileModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center text-sm transition">
+          ✕
+        </button>
+      </div>
+
+      <!-- Avatar Picker -->
+      <div class="space-y-2">
+        <label class="block text-xs font-semibold text-slate-300">Choose Your Avatar</label>
+        <div class="grid grid-cols-4 sm:grid-cols-8 gap-2" id="avatarPickerGrid">
+          <button type="button" onclick="selectAvatar('🎓')" class="avatar-opt p-2.5 rounded-2xl bg-slate-800 border border-slate-700 hover:border-brand-500 text-xl flex items-center justify-center transition">🎓</button>
+          <button type="button" onclick="selectAvatar('🚀')" class="avatar-opt p-2.5 rounded-2xl bg-slate-800 border border-slate-700 hover:border-brand-500 text-xl flex items-center justify-center transition">🚀</button>
+          <button type="button" onclick="selectAvatar('🤖')" class="avatar-opt p-2.5 rounded-2xl bg-slate-800 border border-slate-700 hover:border-brand-500 text-xl flex items-center justify-center transition">🤖</button>
+          <button type="button" onclick="selectAvatar('🧬')" class="avatar-opt p-2.5 rounded-2xl bg-slate-800 border border-slate-700 hover:border-brand-500 text-xl flex items-center justify-center transition">🧬</button>
+          <button type="button" onclick="selectAvatar('⚡')" class="avatar-opt p-2.5 rounded-2xl bg-slate-800 border border-slate-700 hover:border-brand-500 text-xl flex items-center justify-center transition">⚡</button>
+          <button type="button" onclick="selectAvatar('🎨')" class="avatar-opt p-2.5 rounded-2xl bg-slate-800 border border-slate-700 hover:border-brand-500 text-xl flex items-center justify-center transition">🎨</button>
+          <button type="button" onclick="selectAvatar('🦉')" class="avatar-opt p-2.5 rounded-2xl bg-slate-800 border border-slate-700 hover:border-brand-500 text-xl flex items-center justify-center transition">🦉</button>
+          <button type="button" onclick="selectAvatar('🦁')" class="avatar-opt p-2.5 rounded-2xl bg-slate-800 border border-slate-700 hover:border-brand-500 text-xl flex items-center justify-center transition">🦁</button>
+        </div>
+      </div>
+
+      <!-- Profile Form Fields -->
+      <div class="space-y-4 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Student Full Name</label>
+          <input type="text" id="profileNameInput" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 font-medium">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Target Major / Field</label>
+            <select id="profileMajorSelect" class="w-full px-3 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none">
+              <option value="Computer Science & AI">💻 Computer Science & AI</option>
+              <option value="Physics & Astronomy">🌌 Physics & Astronomy</option>
+              <option value="Pure & Applied Math">📐 Pure & Applied Math</option>
+              <option value="Biology & Pre-Med">🧬 Biology & Pre-Med</option>
+              <option value="Economics & Finance">📈 Economics & Finance</option>
+              <option value="General STEM">🔬 General STEM</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Preferred Learning Style</label>
+            <select id="profileStyleSelect" class="w-full px-3 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none">
+              <option value="Visual & Intuitive">👁️ Visual & Diagrams</option>
+              <option value="Analogy-First (ELI5)">🧒 Analogy-First (ELI5)</option>
+              <option value="Mathematical Derivations">📐 Mathematical Rigor</option>
+              <option value="Socratic Dialogue">🦉 Socratic / Questions</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Daily Target Slider -->
+        <div class="p-4 rounded-2xl bg-slate-850 border border-slate-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-semibold text-slate-200">Daily Study Target Goal</span>
+            <span id="profileGoalDisplay" class="text-brand-400 font-bold font-mono text-sm">45 min / day</span>
+          </div>
+          <input type="range" id="profileGoalSlider" min="15" max="120" step="5" value="45" 
+                 oninput="onGoalSliderChange(this.value)" class="w-full accent-brand-500">
+          <p class="text-[11px] text-slate-400">Aiming for 45+ minutes activates the weekly streak booster.</p>
+        </div>
+
+        <!-- Student Bio -->
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Learning Mission Statement / Bio</label>
+          <textarea id="profileBioInput" rows="2" placeholder="e.g. Mastering deep learning architectures and quantum mechanics..." 
+                    class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:outline-none"></textarea>
+        </div>
+      </div>
+
+      <!-- Modal Action Buttons -->
+      <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+        <button type="button" onclick="closeProfileModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition">
+          Cancel
+        </button>
+        <button type="button" onclick="saveUserProfile()" id="saveProfileBtn" class="px-6 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white text-xs font-semibold shadow-lg shadow-brand-500/25 transition">
+          Save Profile Changes
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================
+       SAVED NOTE DETAIL MODAL
+       ======================================================== -->
+  <div id="savedNoteDetailModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-5 shadow-2xl">
+      <div class="flex items-start justify-between gap-4 border-b border-slate-800 pb-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span id="detailNoteTopicBadge" class="text-[10px] px-2.5 py-0.5 rounded-full bg-brand-500/20 text-brand-300 font-semibold border border-brand-500/30">General STEM</span>
+            <span id="detailNoteDate" class="text-xs text-slate-500 font-mono">Today</span>
+          </div>
+          <h2 id="detailNoteTitle" class="text-xl font-bold text-white">Note Title</h2>
+        </div>
+        <button onclick="closeNoteDetailModal()" class="text-slate-400 hover:text-white text-lg p-1.5 rounded-lg hover:bg-slate-800 transition">✕</button>
+      </div>
+
+      <!-- Executive Summary -->
+      <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
+        <span class="text-xs font-bold text-brand-400 uppercase tracking-wider block">📋 Executive Summary</span>
+        <p id="detailNoteExecSummary" class="text-xs text-slate-200 leading-relaxed"></p>
+      </div>
+
+      <!-- Takeaways & Formulas Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60 space-y-2">
+          <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider block">🎯 Key Takeaways</span>
+          <ul id="detailNoteTakeawaysList" class="space-y-1.5 text-xs text-slate-300"></ul>
+        </div>
+        <div class="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60 space-y-2">
+          <span class="text-xs font-bold text-purple-400 uppercase tracking-wider block">📐 Formula Cheatsheet</span>
+          <div id="detailNoteFormulasList" class="space-y-2"></div>
+        </div>
+      </div>
+
+      <!-- Glossary -->
+      <div class="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60 space-y-2">
+        <span class="text-xs font-bold text-amber-400 uppercase tracking-wider block">📖 Vocabulary & Jargon Glossary</span>
+        <div id="detailNoteGlossaryGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs"></div>
+      </div>
+
+      <!-- Modal Actions -->
+      <div class="flex items-center justify-between pt-3 border-t border-slate-800 text-xs">
+        <button id="deleteSavedNoteBtn" onclick="deleteCurrentOpenedNote()" class="px-4 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 font-semibold border border-rose-500/30 transition flex items-center gap-1.5">
+          <span>🗑️</span> Delete Note
+        </button>
+        <div class="flex items-center gap-2">
+          <button id="copyOpenedNoteMarkdownBtn" onclick="copyOpenedNoteMarkdown()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium transition flex items-center gap-1.5">
+            <span>📋</span> Copy Markdown
+          </button>
+          <button onclick="closeNoteDetailModal()" class="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold transition">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       INTERACTIVE 5-MINUTE LIVE DEMONSTRATION TOUR MODAL
+       ======================================================== -->
+  <div id="tourModal" class="fixed inset-0 z-50 hidden flex items-end sm:items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+    <div class="bg-slate-900 border border-slate-700/80 rounded-3xl max-w-xl w-full p-6 space-y-5 shadow-2xl relative overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Top Glow Accent -->
+      <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-72 h-24 bg-gradient-to-r from-amber-500/30 via-rose-500/30 to-brand-500/30 blur-2xl pointer-events-none"></div>
+
+      <!-- Tour Header -->
+      <div class="relative flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-xs px-2.5 py-1 rounded-full bg-gradient-to-r from-amber-500/20 to-rose-500/20 text-amber-300 border border-amber-500/30 font-bold uppercase tracking-wider flex items-center gap-1">
+            <span>🎬</span> 5-Min Live Showcase
+          </span>
+          <span id="tourStepBadge" class="text-xs text-slate-400 font-mono">Minute 1 of 5</span>
+        </div>
+        <button onclick="closeTourModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">✕</button>
+      </div>
+
+      <!-- Step Progress Bar -->
+      <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+        <div id="tourProgressBar" class="bg-gradient-to-r from-amber-400 via-rose-500 to-brand-500 h-full transition-all duration-300" style="width: 20%"></div>
+      </div>
+
+      <!-- Step Content -->
+      <div class="space-y-2">
+        <h3 id="tourStepTitle" class="text-lg font-bold text-white">Minute 1: Intuitive Dashboard & Cognitive Scaffolding</h3>
+        <p id="tourStepDescription" class="text-xs text-slate-300 leading-relaxed">
+          Welcome to EduBuddy Aura! Observe real live metrics powered by SQLite: active streak, study time, domain mastery radar, and our automatic weak-area remediation roadmap.
+        </p>
+      </div>
+
+      <!-- Key Showcase Highlights -->
+      <div id="tourStepHighlights" class="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800 text-xs text-slate-300 space-y-1.5 font-medium">
+        <!-- Injected bullet points -->
+      </div>
+
+      <!-- Interactive Step Actions -->
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-800">
+        <button id="tourActionBtn" onclick="runCurrentTourAction()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-lg shadow-indigo-600/25 flex items-center gap-1.5 transition">
+          <span>⚡</span> Live Action Test
+        </button>
+        <div class="flex items-center gap-2">
+          <button id="tourPrevBtn" onclick="prevTourStep()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition disabled:opacity-40">
+            ← Prev
+          </button>
+          <button id="tourNextBtn" onclick="nextTourStep()" class="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-400 hover:to-rose-500 text-white text-xs font-bold shadow-lg shadow-rose-500/25 transition">
+            Next Milestone →
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================
+       GOOGLE GEMINI AI PROVIDER CONFIGURATION MODAL
+       ======================================================== -->
+  <div id="geminiKeyModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md">
+    <div class="bg-slate-900 border border-slate-700/80 rounded-3xl max-w-lg w-full p-6 space-y-5 shadow-2xl relative overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Top Glow Accent -->
+      <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-72 h-20 bg-gradient-to-r from-blue-500/30 via-indigo-500/30 to-purple-500/30 blur-2xl pointer-events-none"></div>
+
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between gap-3 border-b border-slate-800 pb-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 font-bold border border-blue-500/30 flex items-center gap-1">
+              <span>⚡</span> Google Gemini API
+            </span>
+            <span class="text-[10px] text-slate-400 font-mono">v1beta REST API</span>
+          </div>
+          <h2 class="text-lg font-bold text-white">Configure Gemini AI Provider</h2>
+          <p class="text-xs text-slate-400">Equip your Socratic AI Tutor with Google's state-of-the-art multimodal reasoning.</p>
+        </div>
+        <button onclick="closeGeminiModal()" class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition">✕</button>
+      </div>
+
+      <!-- Current Connection Status Box -->
+      <div id="geminiCurrentStatus" class="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 text-xs text-slate-300">
+        <span class="text-amber-400 font-semibold">Checking connection status...</span>
+      </div>
+
+      <!-- API Key Form -->
+      <div class="space-y-4 text-xs">
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="font-semibold text-slate-200">Google Gemini API Key</label>
+            <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="text-brand-400 hover:text-brand-300 underline font-medium">
+              Get Free Key from AI Studio ↗
+            </a>
+          </div>
+          <input type="password" id="geminiApiKeyInput" placeholder="AQ.Ab8RN6... (Key directly integrated in code)" 
+                 class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white font-mono placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs">
+          <p class="text-[11px] text-emerald-400 mt-1">✓ Your key <code>AQ.Ab8R...BVEhA</code> is directly implemented in code with <strong>gemini-3.8-flash</strong>.</p>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-200 mb-1.5">Gemini Model Architecture</label>
+          <select id="geminiModelSelect" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:ring-1 focus:ring-brand-500 text-xs">
+            <option value="gemini-3.8-flash" selected>gemini-3.8-flash (Active Primary Model)</option>
+            <option value="gemini-2.0-flash">gemini-2.0-flash (Ultra-Fast & Smartest)</option>
+            <option value="gemini-1.5-flash">gemini-1.5-flash (Fast & Highly Stable)</option>
+            <option value="gemini-1.5-pro">gemini-1.5-pro (Deep Reasoning & Analysis)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Verification Feedback Banner -->
+      <div id="geminiModalFeedback" class="hidden text-xs rounded-xl p-3"></div>
+
+      <!-- Modal Action Buttons -->
+      <div class="flex items-center justify-between pt-3 border-t border-slate-800 text-xs">
+        <button type="button" id="disconnectGeminiBtn" onclick="disconnectGeminiApi()" class="hidden px-3 py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 font-semibold border border-rose-500/30 transition">
+          Disconnect Key
+        </button>
+        <div class="flex items-center gap-2 ml-auto">
+          <button type="button" onclick="closeGeminiModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium transition">
+            Cancel
+          </button>
+          <button type="button" id="saveGeminiBtn" onclick="saveGeminiKeyFromModal()" class="px-5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold shadow-lg shadow-indigo-600/25 flex items-center gap-1.5 transition">
+            <span>🚀</span> Verify & Connect Key
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Audio Focus Player Hidden Audio Node (synthesized via Web Audio API) -->
+  <div id="audioToast" class="fixed bottom-6 right-6 z-50 hidden bg-slate-900 border border-slate-700 p-4 rounded-2xl shadow-2xl flex items-center gap-3">
+    <div class="w-8 h-8 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center animate-pulse">
+      🎧
+    </div>
+    <div class="text-xs">
+      <span class="font-bold text-white block">Focus Soundscape Active</span>
+      <span class="text-slate-400" id="audioTrackName">Synthetic Lofi Ambient Stream</span>
+    </div>
+    <button onclick="toggleFocusAudio()" class="ml-2 text-slate-400 hover:text-white text-xs">✕</button>
+  </div>
+
+  <!-- JavaScript Modules -->
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/audio.js"></script>
+  <script src="/static/js/simplifier.js"></script>
+  <script src="/static/js/tutor.js"></script>
+  <script src="/static/js/simulations.js"></script>
+  <script src="/static/js/quizzes.js"></script>
+  <script src="/static/js/flashcards.js"></script>
+  <script src="/static/js/mindmap.js"></script>
+  <script src="/static/js/notes.js"></script>
+  <script src="/static/js/app.js"></script>
+
+</body>
+</html>
