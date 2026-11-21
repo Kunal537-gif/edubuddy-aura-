@@ -4,7 +4,18 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 BACKEND_DIR = BASE_DIR / "backend"
 FRONTEND_DIR = BASE_DIR / "frontend"
-DATABASE_PATH = Path(os.getenv("DATABASE_PATH", str(BASE_DIR / "edubuddy.db")))
+# Vercel Serverless environment: /tmp is the only writable filesystem
+if os.getenv("VERCEL"):
+    DATABASE_PATH = Path("/tmp/edubuddy.db")
+    seed_db = BASE_DIR / "edubuddy.db"
+    if seed_db.exists() and not DATABASE_PATH.exists():
+        import shutil
+        try:
+            shutil.copyfile(seed_db, DATABASE_PATH)
+        except Exception:
+            pass
+else:
+    DATABASE_PATH = Path(os.getenv("DATABASE_PATH", str(BASE_DIR / "edubuddy.db")))
 
 # Load local development secrets from .env when python-dotenv is installed.
 # In Cloud Run, configure environment variables / Secret Manager instead.

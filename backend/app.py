@@ -4,7 +4,7 @@ from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, HTMLResponse
 
 from backend.config import (
     APP_TITLE, APP_VERSION, APP_DESCRIPTION, 
@@ -34,10 +34,13 @@ from backend.models import (
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Initialize database and seed high-yield concept data
-    init_db()
-    seed_initial_data()
-    print("✓ EduBuddy Aura Backend initialized successfully!")
+    # Initialize database and seed high-yield concept data safely
+    try:
+        init_db()
+        seed_initial_data()
+        print("✓ EduBuddy Aura Backend initialized successfully!")
+    except Exception as e:
+        print(f"[Lifespan Warning] DB init: {e}")
     yield
 
 app = FastAPI(
@@ -430,4 +433,7 @@ if FRONTEND_DIR.exists():
 
     @app.get("/")
     def serve_index():
-        return FileResponse(str(FRONTEND_DIR / "index.html"))
+        index_file = FRONTEND_DIR / "index.html"
+        if index_file.exists():
+            return HTMLResponse(content=index_file.read_text(encoding="utf-8"))
+        return HTMLResponse(content="<h1>EduBuddy Aura is loading...</h1>")
